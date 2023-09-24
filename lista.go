@@ -1,6 +1,5 @@
 package lista
 //Archivo con las primitivas
-// dgnlksdws
 type Lista[T any] interface {
 	// Corrobora si una lista esta vacia, devolviendo un dato del tipo booleano en tal caso.
 	EstaVacia() bool
