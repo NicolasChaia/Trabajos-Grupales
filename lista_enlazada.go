@@ -90,23 +90,6 @@ func (lista *listaEnlazada[T]) verSiEstaVacia() {
 
 // Iterador Lista
 
-// Permite aplicar la funcion a todos los elementos de la lista, teniendo dos condiciones de corte, que no haya mas elementos en la lista o que se devuelva falso.
-func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
-	// for iter := lista.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
-
-	// }
-	// La verdad que no me acuerdo muy bien como usar ese ciclo for (me acuerdo que a Martin le gustaba mas pero yo creo que asi podria andar)
-	iter := lista.Iterador()
-	for iter.HaySiguiente() {
-		valor := iter.Siguiente()
-		// no me acuerdo si habia que cortar cuando sea true o cuando sea false, en este caso lo puse por si es false-> termino la iteracion
-		if !visitar(valor) {
-			break
-		}
-
-	}
-}
-
 type iterListaEnlazada[T any] struct {
 	// Necesitamos el actual, anterior para cuando insertemos o borremos no perdamos las referencias
 	actual   *nodoLista[T]
@@ -118,10 +101,26 @@ type iterListaEnlazada[T any] struct {
 func (lista *listaEnlazada[T]) Iterador() IteradorLista[T] {
 	iter := iterListaEnlazada[T]{
 		actual:   lista.primero,
-		anterior: lista.primero,
+		anterior: nil,
 		lista:    lista,
 	}
 	return &iter
+}
+
+// Permite aplicar la funcion a todos los elementos de la lista, teniendo dos condiciones de corte, que no haya mas elementos en la lista o que se devuelva falso.
+func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
+	// for iter := lista.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
+
+	// }
+	// La verdad que no me acuerdo muy bien como usar ese ciclo for (me acuerdo que a Martin le gustaba mas pero yo creo que asi podria andar)
+	iter := lista.Iterador()
+	for iter.HaySiguiente() {
+		valor := iter.VerActual()
+		if !visitar(valor) {
+			break
+		}
+		iter.Siguiente()
+	}
 }
 
 func (iter *iterListaEnlazada[T]) VerActual() T {
@@ -135,11 +134,11 @@ func (iter *iterListaEnlazada[T]) HaySiguiente() bool {
 	return iter.actual != nil
 }
 func (iter *iterListaEnlazada[T]) Siguiente() {
-	if iter.actual.prox == nil {
+	if iter.actual == nil {
 		panic("El iterador termino de iterar")
 	} else {
+		iter.anterior = iter.actual
 		iter.actual = iter.actual.prox
-		iter.anterior = iter.anterior.prox
 	}
 }
 func (iter *iterListaEnlazada[T]) Insertar(elemento T) {
@@ -147,28 +146,26 @@ func (iter *iterListaEnlazada[T]) Insertar(elemento T) {
 	if iter.lista.EstaVacia() {
 		iter.lista.primero = elem
 		iter.lista.ultimo = elem
-		iter.actual = iter.lista.primero
 	} else {
 		iter.anterior.prox = elem
-		elem.prox = iter.actual
-		iter.actual = elem
+		iter.lista.ultimo = elem
 	}
 	iter.lista.largo++
+	iter.actual = elem
 }
 func (iter *iterListaEnlazada[T]) Borrar() T {
-	// Esta funcion medio que me dejo en conflicto, la voy a hacer poniendo panics si se hacen operaciones invalidas, te pido que le pegues una chequeada y hagas los cambios que consideres necesarios xxq dudo q esta bien de una, pero creo que es la base :$
+	// Terminar de chequear esta funcion integra
 	if iter.actual == nil {
 		panic("El iterador termino de iterar")
 	}
-	//Si mi elemento es el primero
 	elemento := iter.actual.dato
-	if iter.actual == iter.anterior {
-		// Hago que el que era el primero sea el segundo
-		iter.actual = iter.actual.prox
+	if iter.anterior == nil {
+		iter.lista.primero = iter.actual.prox
 	} else {
 		iter.anterior.prox = iter.actual.prox
 	}
 	iter.actual = iter.actual.prox
+	// No se si aca tambien se actualizaria asi el anterior ¿?
 	iter.anterior = iter.anterior.prox
 	iter.lista.largo--
 	return elemento
