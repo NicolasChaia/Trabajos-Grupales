@@ -180,20 +180,21 @@ func (iter *iterListaEnlazada[T]) Borrar() T {
 	elemento := iter.actual.dato
 
 	if iter.anterior == nil {
-		//Caso de que se elimina el primero
-		iter.lista.primero = iter.actual.prox
-		iter.actual = iter.actual.prox
+		if iter.actual.prox == nil {
+			iter.actual = nil
+			iter.lista.primero = nil
+			iter.lista.ultimo = nil
+		} else {
+			//Caso de que se elimina el primero
+			iter.lista.primero = iter.actual.prox
+			iter.lista.ultimo = iter.lista.primero
+			iter.actual = iter.actual.prox
+		}
 	} else if iter.actual.prox == nil {
 		//Caso en que se quiera eliminar el ultimo
 		iter.anterior.prox = iter.actual.prox
 		iter.lista.ultimo = iter.anterior
 		iter.actual = nil
-	} else if iter.lista.primero == iter.actual && iter.lista.ultimo == iter.actual {
-		//Caso en donde queda un solo elemento
-		iter.actual = nil
-		iter.lista.primero = iter.actual
-		iter.lista.ultimo = iter.actual
-
 	} else {
 		// Caso general, elementos en el "medio" de la lista
 		iter.actual = iter.actual.prox
@@ -201,4 +202,5 @@ func (iter *iterListaEnlazada[T]) Borrar() T {
 	}
 	iter.lista.largo--
 	return elemento
+
 }
