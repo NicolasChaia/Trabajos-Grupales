@@ -31,6 +31,12 @@ func (lista *listaEnlazada[T]) EstaVacia() bool {
 // Permite insertar un elemento en la primera poscicion de una lista y en tiempo constante.
 func (lista *listaEnlazada[T]) InsertarPrimero(dato T) {
 	nodo := nodoCrear[T](dato)
+	if lista.primero == nil {
+		//Caso en donde la lista esta vacia
+		lista.primero = nodo
+		lista.primero.prox = lista.ultimo
+		lista.ultimo = nodo
+	}
 	nodo.prox = lista.primero
 	lista.primero = nodo
 	lista.largo++
@@ -40,38 +46,40 @@ func (lista *listaEnlazada[T]) InsertarPrimero(dato T) {
 // Permite insertar un elemento en la ultima poscicion de la lista.
 func (lista *listaEnlazada[T]) InsertarUltimo(dato T) {
 	nodo := nodoCrear[T](dato)
-	lista.ultimo.prox = nodo
-	nodo.prox = nil
-	lista.ultimo = nodo
+	if lista.primero == nil {
+		//Caso en donde la lista esta vacia
+		lista.primero = nodo
+		lista.primero.prox = lista.ultimo
+		lista.ultimo = nodo
+	} else {
+		lista.ultimo.prox = nodo
+		lista.ultimo = nodo
+	}
 	lista.largo++
 }
 
 // Se encarga de borrar el primer elemento de la lista enlazada y devolverlo.
 func (lista *listaEnlazada[T]) BorrarPrimero() T {
-	// if lista.EstaVacia() {
-	// 	panic("La lista esta vacia")
-	// }
 	lista.verSiEstaVacia()
 	dato := lista.primero.dato
-	lista.primero = lista.primero.prox
+	if lista.primero == lista.ultimo {
+		lista.primero = nil
+		lista.ultimo = nil
+	} else {
+		lista.primero = lista.primero.prox
+	}
 	lista.largo--
 	return dato
 }
 
 // Permite mostrar el dato del primer elemento de la lista.
 func (lista *listaEnlazada[T]) VerPrimero() T {
-	// if lista.EstaVacia() {
-	// 	panic("La lista esta vacia")
-	// }
 	lista.verSiEstaVacia()
 	return lista.primero.dato
 }
 
 // Permite mostrar el dato del ultimo elemento de la lista.
 func (lista *listaEnlazada[T]) VerUltimo() T {
-	// if lista.EstaVacia() {
-	// 	panic("La lista esta vacia")
-	// }
 	lista.verSiEstaVacia()
 	return lista.ultimo.dato
 }
@@ -109,10 +117,6 @@ func (lista *listaEnlazada[T]) Iterador() IteradorLista[T] {
 
 // Permite aplicar la funcion a todos los elementos de la lista, teniendo dos condiciones de corte, que no haya mas elementos en la lista o que se devuelva falso.
 func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
-	// for iter := lista.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
-
-	// }
-	// La verdad que no me acuerdo muy bien como usar ese ciclo for (me acuerdo que a Martin le gustaba mas pero yo creo que asi podria andar)
 	iter := lista.Iterador()
 	for iter.HaySiguiente() {
 		valor := iter.VerActual()
@@ -144,7 +148,20 @@ func (iter *iterListaEnlazada[T]) Siguiente() {
 func (iter *iterListaEnlazada[T]) Insertar(elemento T) {
 	elem := nodoCrear[T](elemento)
 	if iter.lista.EstaVacia() {
+		//Caso en que esta vacia
 		iter.lista.primero = elem
+		iter.lista.ultimo = elem
+	} else if iter.anterior == nil {
+		//Caso donde se inserta primero
+		elem.prox = iter.actual
+		iter.lista.primero = elem
+		iter.actual = elem
+
+	} else if iter.actual == nil {
+		//Caso donde se quiera insertar al ultimo
+		iter.anterior.prox = elem
+		elem.prox = nil
+		iter.actual = elem
 		iter.lista.ultimo = elem
 	} else {
 		iter.anterior.prox = elem
@@ -159,14 +176,27 @@ func (iter *iterListaEnlazada[T]) Borrar() T {
 		panic("El iterador termino de iterar")
 	}
 	elemento := iter.actual.dato
+
 	if iter.anterior == nil {
+		//Caso de que se elimina el primero
 		iter.lista.primero = iter.actual.prox
-	} else {
+		iter.actual = iter.actual.prox
+	} else if iter.actual.prox == nil {
+		//Caso en que se quiera eliminar el ultimo
 		iter.anterior.prox = iter.actual.prox
+		iter.lista.ultimo = iter.anterior
+		iter.actual = nil
+	} else if iter.lista.primero == iter.actual && iter.lista.ultimo == iter.actual {
+		//Caso en donde queda un solo elemento
+		iter.actual = nil
+		iter.lista.primero = iter.actual
+		iter.lista.ultimo = iter.actual
+
+	} else {
+		// Caso general, elementos en el "medio" de la lista
+		iter.actual = iter.actual.prox
+		iter.anterior.prox = iter.actual
 	}
-	iter.actual = iter.actual.prox
-	// No se si aca tambien se actualizaria asi el anterior ¿?
-	iter.anterior = iter.anterior.prox
 	iter.lista.largo--
 	return elemento
 }
