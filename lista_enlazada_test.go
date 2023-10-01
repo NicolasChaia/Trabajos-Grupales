@@ -144,15 +144,6 @@ func TestVolumenGrande(t *testing.T) {
 }
 
 // Casos del iterador externo:
-/* func Test(t *testing.T) {
-	lista := TDALista.CrearListaEnlazada[int]()
-
-	/// Agregas elementos
-
-	iter := lista.Iterador()
-	// fot iter.Siguiente()...
-
-} */
 
 // Al insertar un elemento en la posición en la que se crea el iterador, efectivamente se inserta al principio.
 func TestIterInsertarAlPrincipio(t *testing.T) {
@@ -180,16 +171,27 @@ func TestIterInsetarAlFinal(t *testing.T) {
 	require.EqualValues(t, dato, lista.VerUltimo())
 }
 
+// Borra el unico elemento de una lista enlazada
+func TestIterUnSoloElemento(t *testing.T) {
+	lista := TDALista.CrearListaEnlazada[int]()
+	lista.InsertarPrimero(1)
+	iter := lista.Iterador()
+	for iter.HaySiguiente() {
+		iter.Borrar()
+	}
+	require.True(t, lista.EstaVacia())
+}
+
 // Insertar un elemento en el medio se hace en la posición correcta.
 func TestIterInsertarMedio(t *testing.T) {
 	lista := TDALista.CrearListaEnlazada[string]()
 	iter := lista.Iterador()
 	mitad := lista.Largo() / 2
 	elem := ("Barbara")
-	arreglo_str := []string{"TDA", "Lista", "Enlazada", "Alan", "Grace"}
+	arregloStr := []string{"TDA", "Lista", "Enlazada", "Alan", "Grace"}
 	// Agrego elementos a la lista
-	for i := 0; i < len(arreglo_str); i++ {
-		lista.InsertarPrimero(arreglo_str[i])
+	for i := 0; i < len(arregloStr); i++ {
+		lista.InsertarPrimero(arregloStr[i])
 	}
 	for i := 0; i < lista.Largo(); i++ {
 		// Recorro la lista hasta largo/2 e inserto el elemento en la mitad de la misma
@@ -245,6 +247,11 @@ func TestIterBorrarTodosLosElementos(t *testing.T) {
 		iter.Borrar()
 	}
 	require.True(t, lista.EstaVacia())
+	lista.InsertarPrimero(1)
+	lista.InsertarUltimo(2)
+	require.False(t, lista.EstaVacia())
+	require.EqualValues(t, 1, lista.VerPrimero())
+	require.EqualValues(t, 2, lista.VerUltimo())
 }
 
 // Verificar que al remover un elemento del medio, este no está.
