@@ -268,7 +268,7 @@ func TestIterBorrarMedio(t *testing.T) {
 	}
 	for i := 0; i < mitad; i++ {
 		iter.Siguiente()
-		require.False(t, compararElementos(elemento, iter.VerActual()))
+		require.True(t, compararElementos(elemento, iter.VerActual()))
 	}
 
 }
@@ -276,13 +276,42 @@ func compararElementos(a, b int) bool {
 	return a == b
 }
 
-//Otros casos borde que pueden encontrarse al utilizar el iterador externo.
-
 //Casos del iterador interno
 
-// Test imprime elementos
 // Test suma elementos
-// Test busqueda lineal
+func TestContarElementos(t *testing.T) {
+	lista := TDALista.CrearListaEnlazada[int]()
+	lista.InsertarUltimo(1)
+	lista.InsertarUltimo(2)
+	lista.InsertarUltimo(3)
+	lista.InsertarUltimo(8)
+
+	contador := 0
+	contadorPuentero := &contador
+	lista.Iterar(func(v int) bool {
+		*contadorPuentero += v
+		return true
+	})
+	require.EqualValues(t, 14, contador)
+}
+
+func TestContarElementosCorte(t *testing.T) {
+	lista := TDALista.CrearListaEnlazada[int]()
+	lista.InsertarUltimo(5)
+	lista.InsertarUltimo(0)
+	lista.InsertarUltimo(3)
+	lista.InsertarUltimo(8)
+	resultado := 0
+	contador := 0
+	lista.Iterar(func(v int) bool {
+		contador++
+		resultado += v
+		return contador < 2
+	})
+	require.EqualValues(t, 5, resultado)
+}
+
+// // Test busqueda lineal
 func TestIterBusquedaLineal(t *testing.T) {
 	lista := TDALista.CrearListaEnlazada[int]()
 	lista.InsertarPrimero(1)
@@ -292,13 +321,14 @@ func TestIterBusquedaLineal(t *testing.T) {
 	elemBuscado := 8
 	pos := 0
 	encontrado := false
+	encontradoPuntero := &encontrado
 	lista.Iterar(func(n int) bool {
 		if n == elemBuscado {
-			encontrado = true
+			*encontradoPuntero = true
 			return false
 		}
 		pos++
+		require.EqualValues(t, 4, pos)
 		return true
 	})
-
 }

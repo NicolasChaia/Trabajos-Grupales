@@ -23,12 +23,10 @@ func CrearListaEnlazada[T any]() Lista[T] {
 	return &lista
 }
 
-// Devuelve si la lista esta vacia o no con un booleano
 func (lista *listaEnlazada[T]) EstaVacia() bool {
 	return lista.primero == nil && lista.ultimo == nil && lista.largo == 0
 }
 
-// Permite insertar un elemento en la primera poscicion de una lista y en tiempo constante.
 func (lista *listaEnlazada[T]) InsertarPrimero(dato T) {
 	nodo := nodoCrear[T](dato)
 	if lista.primero == nil {
@@ -43,7 +41,6 @@ func (lista *listaEnlazada[T]) InsertarPrimero(dato T) {
 
 }
 
-// Permite insertar un elemento en la ultima poscicion de la lista.
 func (lista *listaEnlazada[T]) InsertarUltimo(dato T) {
 	nodo := nodoCrear[T](dato)
 	if lista.primero == nil {
@@ -58,7 +55,6 @@ func (lista *listaEnlazada[T]) InsertarUltimo(dato T) {
 	lista.largo++
 }
 
-// Se encarga de borrar el primer elemento de la lista enlazada y devolverlo.
 func (lista *listaEnlazada[T]) BorrarPrimero() T {
 	lista.verSiEstaVacia()
 	dato := lista.primero.dato
@@ -72,19 +68,16 @@ func (lista *listaEnlazada[T]) BorrarPrimero() T {
 	return dato
 }
 
-// Permite mostrar el dato del primer elemento de la lista.
 func (lista *listaEnlazada[T]) VerPrimero() T {
 	lista.verSiEstaVacia()
 	return lista.primero.dato
 }
 
-// Permite mostrar el dato del ultimo elemento de la lista.
 func (lista *listaEnlazada[T]) VerUltimo() T {
 	lista.verSiEstaVacia()
 	return lista.ultimo.dato
 }
 
-// Esta primitiva permite al usuario saber el largo de la lista.
 func (lista *listaEnlazada[T]) Largo() int {
 	return lista.largo
 }
@@ -127,6 +120,7 @@ func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
 	}
 }
 
+// Esta funcion devuelve el dato en el que esta posicionado el iterador en esa la iteracion actual
 func (iter *iterListaEnlazada[T]) VerActual() T {
 	if iter.actual == nil {
 		panic("El iterador termino de iterar")
@@ -134,9 +128,13 @@ func (iter *iterListaEnlazada[T]) VerActual() T {
 		return iter.actual.dato
 	}
 }
+
+// Esta funcion devuelve un booleano si hay mas elementos para seguir iterando en la lista
 func (iter *iterListaEnlazada[T]) HaySiguiente() bool {
 	return iter.actual != nil
 }
+
+// Esta funcion, siempre y cuando exista, "avanza" al siguiente nodo
 func (iter *iterListaEnlazada[T]) Siguiente() {
 	if iter.actual == nil {
 		panic("El iterador termino de iterar")
@@ -145,6 +143,8 @@ func (iter *iterListaEnlazada[T]) Siguiente() {
 		iter.actual = iter.actual.prox
 	}
 }
+
+// Esta funcion se encarga de insertar un elemento en la posicion acutual del iterador
 func (iter *iterListaEnlazada[T]) Insertar(elemento T) {
 	elem := nodoCrear[T](elemento)
 	if iter.lista.EstaVacia() {
@@ -170,6 +170,8 @@ func (iter *iterListaEnlazada[T]) Insertar(elemento T) {
 	iter.lista.largo++
 	iter.actual = elem
 }
+
+// Esta funcion se encarga de borrar un elemento en la posicion acutual del iterador
 func (iter *iterListaEnlazada[T]) Borrar() T {
 	// Terminar de chequear esta funcion integra
 	if iter.actual == nil {
