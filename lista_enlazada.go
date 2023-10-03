@@ -124,7 +124,7 @@ func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
 
 // Esta funcion devuelve el dato en el que esta posicionado el iterador en esa la iteracion actual
 func (iter *iterListaEnlazada[T]) VerActual() T {
-	if iter.HaySiguiente() {
+	if iter.actual == nil {
 		panic("El iterador termino de iterar")
 	} else {
 		return iter.actual.dato
@@ -138,7 +138,7 @@ func (iter *iterListaEnlazada[T]) HaySiguiente() bool {
 
 // Esta funcion, siempre y cuando exista, "avanza" al siguiente nodo
 func (iter *iterListaEnlazada[T]) Siguiente() {
-	if iter.HaySiguiente() {
+	if iter.actual == nil {
 		panic("El iterador termino de iterar")
 	} else {
 		iter.anterior = iter.actual
