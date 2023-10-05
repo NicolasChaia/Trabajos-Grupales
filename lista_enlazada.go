@@ -25,34 +25,36 @@ func CrearListaEnlazada[T any]() Lista[T] {
 }
 
 func (lista *listaEnlazada[T]) EstaVacia() bool {
-	return lista.primero == nil && lista.ultimo == nil && lista.Largo() == 0
+	return lista.primero == nil
 }
 
 func (lista *listaEnlazada[T]) InsertarPrimero(dato T) {
 	nodo := nodoCrear[T](dato)
-	if lista.EstaVacia() {
-		// Caso en donde la lista esta vacia
-		lista.primero = nodo
-		lista.primero.prox = lista.ultimo
-		lista.ultimo = nodo
-	} else {
-		nodo.prox = lista.primero
-	}
+	lista.insertarEstandoVacia(dato)
+	// if lista.EstaVacia() {
+	// 	// Caso en donde la lista esta vacia
+	// 	lista.primero = nodo
+	// 	/// No se a que se referia aca, si borro esta linea o igualo lista.primero.prox a nil, si la borro pasa los tests igualmente
+	// 	lista.primero.prox = nil
+	// 	lista.ultimo = nodo
+	nodo.prox = lista.primero
 	lista.primero = nodo
 	lista.largo++
 }
 
 func (lista *listaEnlazada[T]) InsertarUltimo(dato T) {
 	nodo := nodoCrear[T](dato)
-	if lista.EstaVacia() {
-		// Caso en donde la lista esta vacia
-		lista.primero = nodo
-		lista.primero.prox = lista.ultimo
-		lista.ultimo = nodo
-	} else {
-		lista.ultimo.prox = nodo
-		lista.ultimo = nodo
-	}
+	// Lineas [49,53] podrian reemplazarse por la funcion aux que cree, la cual tiene un error tambien
+	lista.insertarEstandoVacia(dato)
+	// if lista.EstaVacia() {
+	// 	// Caso en donde la lista esta vacia
+	// 	lista.primero = nodo
+	// 	/// Mismo coment linea 36
+	// 	lista.primero.prox = nil
+	// 	lista.ultimo = nodo
+	lista.ultimo.prox = nodo
+	lista.ultimo = nodo
+
 	lista.largo++
 }
 
@@ -89,6 +91,15 @@ func (lista *listaEnlazada[T]) verSiEstaVacia() {
 	if lista.EstaVacia() {
 		panic("La lista esta vacia")
 	}
+}
+
+func (lista *listaEnlazada[T]) insertarEstandoVacia(dato T) {
+	nodo := nodoCrear[T](dato)
+	if lista.EstaVacia() {
+		lista.primero = nodo
+		lista.ultimo = nodo
+	}
+	lista.largo++
 }
 
 // Iterador Lista
@@ -157,8 +168,7 @@ func (iter *iterListaEnlazada[T]) Insertar(elemento T) {
 			iter.lista.ultimo = elem
 		}
 		iter.lista.primero = elem
-	}
-	if iter.anterior != nil {
+	} else {
 		if iter.actual == nil {
 			iter.lista.ultimo = elem
 		} else {
