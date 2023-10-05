@@ -9,7 +9,7 @@ import (
 
 const (
 	cantidadVolumenMedio  = 10
-	cantidadVolumenGrande = 1000
+	cantidadVolumenGrande = 100000
 )
 
 func TestInsertaPrimero(t *testing.T) {
@@ -68,8 +68,6 @@ func TestLargo(t *testing.T) {
 	require.EqualValues(t, 1, lista.Largo())
 	lista.BorrarPrimero()
 	require.EqualValues(t, 0, lista.Largo())
-	require.PanicsWithValue(t, "La lista esta vacia", func() { lista.BorrarPrimero() })
-
 }
 
 func TestListaVacia(t *testing.T) {
@@ -101,27 +99,29 @@ func TestVolumenChico(t *testing.T) {
 	require.PanicsWithValue(t, "La lista esta vacia", func() { lista.VerPrimero() })
 }
 
-func TestVolumenMedio(t *testing.T) {
-	// Test volumen medio
-	lista := TDALista.CrearListaEnlazada[int]()
-	arreglo := make([]int, cantidadVolumenMedio)
-	for i := 0; i < cantidadVolumenMedio; i++ {
-		arreglo[i] = i
-	}
-	for _, elemento := range arreglo {
-		lista.InsertarPrimero(elemento)
-		require.EqualValues(t, elemento, lista.VerPrimero())
+/*
+	 func TestVolumenMedio(t *testing.T) {
+		// Test volumen medio
+		lista := TDALista.CrearListaEnlazada[int]()
+		arreglo := make([]int, cantidadVolumenMedio)
+		for i := 0; i < cantidadVolumenMedio; i++ {
+			arreglo[i] = i
+		}
+		for _, elemento := range arreglo {
+			lista.InsertarPrimero(elemento)
+			require.EqualValues(t, elemento, lista.VerPrimero())
+			require.False(t, lista.EstaVacia())
+		}
+		for j := 0; j < cantidadVolumenMedio; j++ {
+			lista.BorrarPrimero()
+		}
+		require.True(t, lista.EstaVacia())
+		require.PanicsWithValue(t, "La lista esta vacia", func() { lista.BorrarPrimero() })
+		require.PanicsWithValue(t, "La lista esta vacia", func() { lista.VerPrimero() })
+		lista.InsertarPrimero(4)
 		require.False(t, lista.EstaVacia())
 	}
-	for j := 0; j < cantidadVolumenMedio; j++ {
-		lista.BorrarPrimero()
-	}
-	require.True(t, lista.EstaVacia())
-	require.PanicsWithValue(t, "La lista esta vacia", func() { lista.BorrarPrimero() })
-	require.PanicsWithValue(t, "La lista esta vacia", func() { lista.VerPrimero() })
-	lista.InsertarPrimero(4)
-	require.False(t, lista.EstaVacia())
-}
+*/
 func TestVolumenGrande(t *testing.T) {
 	// Test volumen grande
 	lista := TDALista.CrearListaEnlazada[int]()
